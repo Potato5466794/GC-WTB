@@ -87,7 +87,7 @@ MakeDraggable(ImageButton, OutlineButton);
 CreateRounded(ImageButton, 10);
 
 ImageButton.MouseButton1Click:connect(function()
-	(game.CoreGui:FindFirstChild("STELLAR")).Enabled = not (game.CoreGui:FindFirstChild("STELLAR")).Enabled;
+	STELLAR.Enabled = not STELLAR.Enabled;
 end);
 
 local NotificationFrame = Instance.new("ScreenGui");
@@ -198,6 +198,7 @@ function Update:StartLoad()
 	LoaderFrame.Position = UDim2.new(0.5, 0, 0.5, 0);
 	LoaderFrame.Size = UDim2.new(0, 0, 0, 0);
 	LoaderFrame.BorderSizePixel = 0;
+	CreateRounded(LoaderFrame, 15);
 	
 	local MainLoaderFrame = Instance.new("Frame");
 	MainLoaderFrame.Name = "MainLoaderFrame";
@@ -209,6 +210,13 @@ function Update:StartLoad()
 	MainLoaderFrame.Position = UDim2.new(0.5, 0, 0.5, 0);
 	MainLoaderFrame.Size = UDim2.new(0, 0, 0, 0);
 	MainLoaderFrame.BorderSizePixel = 0;
+	CreateRounded(MainLoaderFrame, 15);
+	
+	local ParticleContainer = Instance.new("Frame");
+	ParticleContainer.Name = "ParticleContainer";
+	ParticleContainer.Parent = MainLoaderFrame;
+	ParticleContainer.BackgroundTransparency = 1;
+	ParticleContainer.Size = UDim2.new(1, 0, 1, 0);
 	
 	local TitleLoader = Instance.new("TextLabel");
 	TitleLoader.Parent = MainLoaderFrame;
@@ -258,12 +266,12 @@ function Update:StartLoad()
 	
 	local entranceTween = TweenService:Create(LoaderFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
 		BackgroundTransparency = 0,
-		Size = UDim2.new(1.5, 0, 1.5, 0)
+		Size = UDim2.new(0.6, 0, 0.7, 0)
 	})
 	
 	local frameTween = TweenService:Create(MainLoaderFrame, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 		BackgroundTransparency = 0,
-		Size = UDim2.new(0.5, 0, 0.5, 0)
+		Size = UDim2.new(0.9, 0, 0.9, 0)
 	})
 	
 	local textTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -286,6 +294,39 @@ function Update:StartLoad()
 	textTween1:Play()
 	textTween2:Play()
 	barBgTween:Play()
+	
+	local function createParticle()
+		local Particle = Instance.new("Frame");
+		Particle.Parent = ParticleContainer;
+		Particle.BackgroundColor3 = Color3.fromRGB(math.random(200, 255), math.random(0, 100), math.random(0, 100));
+		Particle.Size = UDim2.new(0, math.random(5, 15), 0, math.random(5, 15));
+		Particle.Position = UDim2.new(math.random(), 0, math.random(), 0);
+		Particle.AnchorPoint = Vector2.new(0.5, 0.5);
+		CreateRounded(Particle, 100);
+		
+		local FloatTween = TweenService:Create(Particle, TweenInfo.new(math.random(2, 4), Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Position = UDim2.new(math.random(), 0, math.random(), 0),
+			Rotation = math.random(-180, 180)
+		})
+		
+		local AlphaTween = TweenService:Create(Particle, TweenInfo.new(math.random(1, 3), Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+			BackgroundTransparency = math.random()
+		})
+		
+		FloatTween:Play()
+		AlphaTween:Play()
+		
+		FloatTween.Completed:Connect(function()
+			Particle:Destroy()
+		end)
+	end
+	
+	spawn(function()
+		while Loader.Parent do
+			createParticle()
+			wait(0.1)
+		end
+	end)
 	
 	local dotCount = 0;
 	local running = true;
@@ -431,7 +472,7 @@ function Update:Window(Config)
 	local keybind = keybind or Enum.KeyCode.RightControl;
 	local yoo = string.gsub(tostring(keybind), "Enum.KeyCode.", "");
 	
-	local STELLAR = Instance.new("ScreenGui");
+	STELLAR = Instance.new("ScreenGui");
 	STELLAR.Name = "STELLAR";
 	STELLAR.Parent = game.CoreGui;
 	STELLAR.DisplayOrder = 999;
@@ -547,22 +588,120 @@ function Update:Window(Config)
 	CloseButton.ImageColor3 = Color3.fromRGB(245, 245, 245);
 	CreateRounded(CloseButton, 3);
 	
-	CloseButton.MouseButton1Click:connect(function()
-		local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-			Size = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1
-		})
+	local function showCloseDialog()
+		local DialogOverlay = Instance.new("Frame");
+		DialogOverlay.Name = "DialogOverlay";
+		DialogOverlay.Parent = STELLAR;
+		DialogOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0);
+		DialogOverlay.BackgroundTransparency = 0.7;
+		DialogOverlay.Size = UDim2.new(1, 0, 1, 0);
+		DialogOverlay.ZIndex = 1000;
 		
-		local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-			Size = UDim2.new(0, 0, 0, 0),
-			BackgroundTransparency = 1
-		})
+		local DialogFrame = Instance.new("Frame");
+		DialogFrame.Name = "DialogFrame";
+		DialogFrame.Parent = DialogOverlay;
+		DialogFrame.AnchorPoint = Vector2.new(0.5, 0.5);
+		DialogFrame.Position = UDim2.new(0.5, 0, 0.5, 0);
+		DialogFrame.Size = UDim2.new(0, 300, 0, 150);
+		DialogFrame.BackgroundColor3 = _G.Dark;
+		DialogFrame.ZIndex = 1001;
+		CreateRounded(DialogFrame, 12);
 		
-		exitTween1:Play()
-		exitTween2:Play()
-		exitTween1.Completed:Wait()
-		STELLAR.Enabled = false;
-	end);
+		local DialogTitle = Instance.new("TextLabel");
+		DialogTitle.Parent = DialogFrame;
+		DialogTitle.Text = "Confirm Close";
+		DialogTitle.Font = Enum.Font.GothamBold;
+		DialogTitle.TextSize = 18;
+		DialogTitle.TextColor3 = Color3.fromRGB(255, 255, 255);
+		DialogTitle.BackgroundTransparency = 1;
+		DialogTitle.Position = UDim2.new(0, 20, 0, 20);
+		DialogTitle.Size = UDim2.new(1, -40, 0, 30);
+		DialogTitle.TextXAlignment = Enum.TextXAlignment.Left;
+		DialogTitle.ZIndex = 1002;
+		
+		local DialogMessage = Instance.new("TextLabel");
+		DialogMessage.Parent = DialogFrame;
+		DialogMessage.Text = "Are you sure you want to close the UI?";
+		DialogMessage.Font = Enum.Font.Gotham;
+		DialogMessage.TextSize = 14;
+		DialogMessage.TextColor3 = Color3.fromRGB(200, 200, 200);
+		DialogMessage.BackgroundTransparency = 1;
+		DialogMessage.Position = UDim2.new(0, 20, 0, 60);
+		DialogMessage.Size = UDim2.new(1, -40, 0, 40);
+		DialogMessage.TextXAlignment = Enum.TextXAlignment.Left;
+		DialogMessage.ZIndex = 1002;
+		
+		local ButtonContainer = Instance.new("Frame");
+		ButtonContainer.Parent = DialogFrame;
+		ButtonContainer.BackgroundTransparency = 1;
+		ButtonContainer.Position = UDim2.new(0, 20, 1, -50);
+		ButtonContainer.Size = UDim2.new(1, -40, 0, 30);
+		ButtonContainer.ZIndex = 1002;
+		
+		local CancelButton = Instance.new("TextButton");
+		CancelButton.Parent = ButtonContainer;
+		CancelButton.Text = "Cancel";
+		CancelButton.Font = Enum.Font.Gotham;
+		CancelButton.TextSize = 14;
+		CancelButton.TextColor3 = Color3.fromRGB(255, 255, 255);
+		CancelButton.BackgroundColor3 = _G.Primary;
+		CancelButton.Size = UDim2.new(0.45, 0, 1, 0);
+		CancelButton.Position = UDim2.new(0, 0, 0, 0);
+		CancelButton.ZIndex = 1003;
+		CreateRounded(CancelButton, 5);
+		
+		local ConfirmButton = Instance.new("TextButton");
+		ConfirmButton.Parent = ButtonContainer;
+		ConfirmButton.Text = "Confirm";
+		ConfirmButton.Font = Enum.Font.Gotham;
+		ConfirmButton.TextSize = 14;
+		ConfirmButton.TextColor3 = Color3.fromRGB(255, 255, 255);
+		ConfirmButton.BackgroundColor3 = _G.Third;
+		ConfirmButton.Size = UDim2.new(0.45, 0, 1, 0);
+		ConfirmButton.Position = UDim2.new(0.55, 0, 0, 0);
+		ConfirmButton.ZIndex = 1003;
+		CreateRounded(ConfirmButton, 5);
+		
+		local entranceTween = TweenService:Create(DialogFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+			Size = UDim2.new(0, 300, 0, 150)
+		})
+		entranceTween:Play()
+		
+		CancelButton.MouseButton1Click:Connect(function()
+			local exitTween = TweenService:Create(DialogFrame, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0)
+			})
+			exitTween:Play()
+			exitTween.Completed:Wait()
+			DialogOverlay:Destroy()
+		end)
+		
+		ConfirmButton.MouseButton1Click:Connect(function()
+			local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 1
+			})
+			
+			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 1
+			})
+			
+			local dialogExit = TweenService:Create(DialogFrame, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0)
+			})
+			
+			dialogExit:Play()
+			exitTween1:Play()
+			exitTween2:Play()
+			dialogExit.Completed:Wait()
+			DialogOverlay:Destroy()
+			exitTween1.Completed:Wait()
+			STELLAR.Enabled = false;
+		end)
+	end
+	
+	CloseButton.MouseButton1Click:connect(showCloseDialog);
 	
 	local ResizeButton = Instance.new("ImageButton");
 	ResizeButton.Name = "ResizeButton";
@@ -892,7 +1031,7 @@ function Update:Window(Config)
 	
 	UserInputService.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Insert then
-			(game.CoreGui:FindFirstChild("STELLAR")).Enabled = not (game.CoreGui:FindFirstChild("STELLAR")).Enabled;
+			STELLAR.Enabled = not STELLAR.Enabled;
 		end;
 	end);
 	
@@ -927,8 +1066,8 @@ function Update:Window(Config)
 		
 		local pageTween = TweenService:Create(Page, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
-			Position = UDim2.new(0, Tab.Size.X.Offset + 18, 0, Top.Size.Y.Offset),
-			Size = UDim2.new(Config.Size.X.Scale, Config.Size.X.Offset - Tab.Size.X.Offset - 25, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
+			Position = UDim2.new(0, Tab.Size.X.Offset + 25, 0, Top.Size.Y.Offset),
+			Size = UDim2.new(Config.Size.X.Scale, Config.Size.X.Offset - Tab.Size.X.Offset - 35, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
 		})
 		
 		local topTween = TweenService:Create(Top, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -1111,7 +1250,7 @@ function Update:Window(Config)
 				defaultSize = false;
 				OutlineMain:TweenPosition(UDim2.new(0.5, 0, 0.45, 0), "Out", "Quad", 0.2, true);
 				Main:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 35, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
 				OutlineMain:TweenSize(UDim2.new(1, -10, 1, -10), "Out", "Quad", 0.4, true);
@@ -1119,7 +1258,7 @@ function Update:Window(Config)
 			else
 				defaultSize = true;
 				Main:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset, 0, WindowConfig.Size.Y.Offset), "Out", "Quad", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 35, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
 				OutlineMain:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15), "Out", "Quad", 0.4, true);
@@ -1222,6 +1361,10 @@ function Update:Window(Config)
 				}):Play()
 				callback();
 			end);
+			
+			TweenService:Create(Button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				BackgroundTransparency = 0.8
+			}):Play()
 		end;
 		
 		function main:Toggle(text, config, desc, callback)
