@@ -1,6 +1,6 @@
 
-if (game:GetService("CoreGui")):FindFirstChild("STELLAR") and (game:GetService("CoreGui")):FindFirstChild("ScreenGui") then
-	(game:GetService("CoreGui")).STELLAR:Destroy();
+if (game:GetService("CoreGui")):FindFirstChild("WTB") and (game:GetService("CoreGui")):FindFirstChild("ScreenGui") then
+	(game:GetService("CoreGui")).WTB:Destroy();
 	(game:GetService("CoreGui")).ScreenGui:Destroy();
 end;
 
@@ -86,10 +86,6 @@ ImageButton.AutoButtonColor = false;
 MakeDraggable(ImageButton, OutlineButton);
 CreateRounded(ImageButton, 10);
 
-ImageButton.MouseButton1Click:connect(function()
-	STELLAR.Enabled = not STELLAR.Enabled;
-end);
-
 local NotificationFrame = Instance.new("ScreenGui");
 NotificationFrame.Name = "NotificationFrame";
 NotificationFrame.Parent = game.CoreGui;
@@ -156,7 +152,7 @@ function Update:Notify(desc)
 	Title.Position = UDim2.new(0, 55, 0, 14);
 	Title.Size = UDim2.new(0, 10, 0, 20);
 	Title.Font = Enum.Font.GothamBold;
-	Title.Text = "STELLAR";
+	Title.Text = "WTB";
 	Title.TextColor3 = Color3.fromRGB(255, 255, 255);
 	Title.TextSize = 16;
 	Title.TextXAlignment = Enum.TextXAlignment.Left;
@@ -220,7 +216,7 @@ function Update:StartLoad()
 	
 	local TitleLoader = Instance.new("TextLabel");
 	TitleLoader.Parent = MainLoaderFrame;
-	TitleLoader.Text = "STELLAR";
+	TitleLoader.Text = "WTB";
 	TitleLoader.Font = Enum.Font.FredokaOne;
 	TitleLoader.TextSize = 50;
 	TitleLoader.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -232,7 +228,7 @@ function Update:StartLoad()
 	
 	local DescriptionLoader = Instance.new("TextLabel");
 	DescriptionLoader.Parent = MainLoaderFrame;
-	DescriptionLoader.Text = "Loading";
+	DescriptionLoader.Text = "加载中";
 	DescriptionLoader.Font = Enum.Font.Gotham;
 	DescriptionLoader.TextSize = 15;
 	DescriptionLoader.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -352,7 +348,10 @@ function Update:StartLoad()
 		barTweenPart2.Completed:Connect(function()
 			wait(0.3);
 			running = false;
-			DescriptionLoader.Text = "Loaded!";
+			DescriptionLoader.Text = "加载完成!";
+			
+			-- 等待2秒再加载UI
+			wait(2)
 			
 			local exitTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 1
@@ -391,7 +390,7 @@ function Update:StartLoad()
 		while running do
 			dotCount = (dotCount + 1) % 4;
 			local dots = string.rep(".", dotCount);
-			DescriptionLoader.Text = "Loading" .. dots;
+			DescriptionLoader.Text = "加载中" .. dots;
 			wait(0.3);
 		end;
 	end);
@@ -404,16 +403,16 @@ local SettingsLib = {
 
 (getgenv()).LoadConfig = function()
 	if readfile and writefile and isfile and isfolder then
-		if not isfolder("STELLAR") then
-			makefolder("STELLAR");
+		if not isfolder("WTB") then
+			makefolder("WTB");
 		end;
-		if not isfolder("STELLAR/Library/") then
-			makefolder("STELLAR/Library/");
+		if not isfolder("WTB/Library/") then
+			makefolder("WTB/Library/");
 		end;
-		if not isfile(("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
-			writefile("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(SettingsLib));
+		if not isfile(("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
+			writefile("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(SettingsLib));
 		else
-			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
+			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
 			for i, v in pairs(Decode) do
 				SettingsLib[i] = v;
 			end;
@@ -426,15 +425,15 @@ end;
 
 (getgenv()).SaveConfig = function()
 	if readfile and writefile and isfile and isfolder then
-		if not isfile(("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
+		if not isfile(("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
 			(getgenv()).Load();
 		else
-			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
+			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
 			local Array = {};
 			for i, v in pairs(SettingsLib) do
 				Array[i] = v;
 			end;
-			writefile("STELLAR/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(Array));
+			writefile("WTB/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(Array));
 		end;
 	else
 		return warn("Status : Undetected Executor");
@@ -472,14 +471,14 @@ function Update:Window(Config)
 	local keybind = keybind or Enum.KeyCode.RightControl;
 	local yoo = string.gsub(tostring(keybind), "Enum.KeyCode.", "");
 	
-	STELLAR = Instance.new("ScreenGui");
-	STELLAR.Name = "STELLAR";
-	STELLAR.Parent = game.CoreGui;
-	STELLAR.DisplayOrder = 999;
+	WTB = Instance.new("ScreenGui");
+	WTB.Name = "WTB";
+	WTB.Parent = game.CoreGui;
+	WTB.DisplayOrder = 999;
 	
 	local OutlineMain = Instance.new("Frame");
 	OutlineMain.Name = "OutlineMain";
-	OutlineMain.Parent = STELLAR;
+	OutlineMain.Parent = WTB;
 	OutlineMain.ClipsDescendants = true;
 	OutlineMain.AnchorPoint = Vector2.new(0.5, 0.5);
 	OutlineMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30);
@@ -497,21 +496,6 @@ function Update:Window(Config)
 	Main.BackgroundTransparency = 1;
 	Main.Position = UDim2.new(0.5, 0, 0.5, 0);
 	Main.Size = UDim2.new(0, 0, 0, 0);
-	
-	local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-		BackgroundTransparency = 0.4,
-		Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
-	})
-	
-	local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-		BackgroundTransparency = 0,
-		Size = WindowConfig.Size
-	})
-	
-	entranceTween1:Play()
-	entranceTween2:Play()
-	
-	CreateRounded(Main, 12);
 	
 	local BtnStroke = Instance.new("UIStroke");
 	
@@ -551,7 +535,7 @@ function Update:Window(Config)
 	NameHub.AnchorPoint = Vector2.new(0, 0.5);
 	NameHub.Size = UDim2.new(0, 1, 0, 25);
 	NameHub.Font = Enum.Font.GothamBold;
-	NameHub.Text = "STELLAR";
+	NameHub.Text = "WTB";
 	NameHub.TextSize = 20;
 	NameHub.TextColor3 = Color3.fromRGB(255, 255, 255);
 	NameHub.TextXAlignment = Enum.TextXAlignment.Left;
@@ -591,7 +575,7 @@ function Update:Window(Config)
 	local function showCloseDialog()
 		local DialogOverlay = Instance.new("Frame");
 		DialogOverlay.Name = "DialogOverlay";
-		DialogOverlay.Parent = STELLAR;
+		DialogOverlay.Parent = WTB;
 		DialogOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0);
 		DialogOverlay.BackgroundTransparency = 0.7;
 		DialogOverlay.Size = UDim2.new(1, 0, 1, 0);
@@ -602,14 +586,14 @@ function Update:Window(Config)
 		DialogFrame.Parent = DialogOverlay;
 		DialogFrame.AnchorPoint = Vector2.new(0.5, 0.5);
 		DialogFrame.Position = UDim2.new(0.5, 0, 0.5, 0);
-		DialogFrame.Size = UDim2.new(0, 300, 0, 150);
+		DialogFrame.Size = UDim2.new(0, 0, 0, 0);
 		DialogFrame.BackgroundColor3 = _G.Dark;
 		DialogFrame.ZIndex = 1001;
 		CreateRounded(DialogFrame, 12);
 		
 		local DialogTitle = Instance.new("TextLabel");
 		DialogTitle.Parent = DialogFrame;
-		DialogTitle.Text = "Confirm Close";
+		DialogTitle.Text = "确认关闭";
 		DialogTitle.Font = Enum.Font.GothamBold;
 		DialogTitle.TextSize = 18;
 		DialogTitle.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -621,7 +605,7 @@ function Update:Window(Config)
 		
 		local DialogMessage = Instance.new("TextLabel");
 		DialogMessage.Parent = DialogFrame;
-		DialogMessage.Text = "Are you sure you want to close the UI?";
+		DialogMessage.Text = "你确定要关闭UI吗?";
 		DialogMessage.Font = Enum.Font.Gotham;
 		DialogMessage.TextSize = 14;
 		DialogMessage.TextColor3 = Color3.fromRGB(200, 200, 200);
@@ -640,7 +624,7 @@ function Update:Window(Config)
 		
 		local CancelButton = Instance.new("TextButton");
 		CancelButton.Parent = ButtonContainer;
-		CancelButton.Text = "Cancel";
+		CancelButton.Text = "取消";
 		CancelButton.Font = Enum.Font.Gotham;
 		CancelButton.TextSize = 14;
 		CancelButton.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -652,7 +636,7 @@ function Update:Window(Config)
 		
 		local ConfirmButton = Instance.new("TextButton");
 		ConfirmButton.Parent = ButtonContainer;
-		ConfirmButton.Text = "Confirm";
+		ConfirmButton.Text = "确定";
 		ConfirmButton.Font = Enum.Font.Gotham;
 		ConfirmButton.TextSize = 14;
 		ConfirmButton.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -662,6 +646,7 @@ function Update:Window(Config)
 		ConfirmButton.ZIndex = 1003;
 		CreateRounded(ConfirmButton, 5);
 		
+		-- 弹窗入场动画
 		local entranceTween = TweenService:Create(DialogFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 			Size = UDim2.new(0, 300, 0, 150)
 		})
@@ -697,7 +682,7 @@ function Update:Window(Config)
 			dialogExit.Completed:Wait()
 			DialogOverlay:Destroy()
 			exitTween1.Completed:Wait()
-			STELLAR.Enabled = false;
+			WTB.Enabled = false;
 		end)
 	end
 	
@@ -807,7 +792,7 @@ function Update:Window(Config)
 	TitleSettings.Size = UDim2.new(1, 0, 0, 20);
 	TitleSettings.Font = Enum.Font.GothamBold;
 	TitleSettings.AnchorPoint = Vector2.new(0, 0);
-	TitleSettings.Text = "Library Settings";
+	TitleSettings.Text = "库设置";
 	TitleSettings.TextSize = 20;
 	TitleSettings.TextColor3 = Color3.fromRGB(245, 245, 245);
 	TitleSettings.TextXAlignment = Enum.TextXAlignment.Left;
@@ -924,7 +909,7 @@ function Update:Window(Config)
 		Button.BackgroundTransparency = 0;
 		Button.Size = UDim2.new(0.8, 0, 0, 30);
 		Button.Font = Enum.Font.Code;
-		Button.Text = title or "Button";
+		Button.Text = title or "按钮";
 		Button.AnchorPoint = Vector2.new(0.5, 0);
 		Button.Position = UDim2.new(0.5, 0, 0, 0);
 		Button.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -945,21 +930,21 @@ function Update:Window(Config)
 		CreateRounded(Button, 5);
 	end;
 	
-	CreateCheckbox("Save Settings", SettingsLib.SaveSettings, function(state)
+	CreateCheckbox("保存设置", SettingsLib.SaveSettings, function(state)
 		SettingsLib.SaveSettings = state;
 		(getgenv()).SaveConfig();
 	end);
 	
-	CreateCheckbox("Loading Animation", SettingsLib.LoadAnimation, function(state)
+	CreateCheckbox("加载动画", SettingsLib.LoadAnimation, function(state)
 		SettingsLib.LoadAnimation = state;
 		(getgenv()).SaveConfig();
 	end);
 	
-	CreateButton("Reset Config", function()
-		if isfolder("STELLAR") then
-			delfolder("STELLAR");
+	CreateButton("重置配置", function()
+		if isfolder("WTB") then
+			delfolder("WTB");
 		end;
-		Update:Notify("Config has been reseted!");
+		Update:Notify("配置已重置!");
 	end);
 	
 	local Tab = Instance.new("Frame");
@@ -1031,7 +1016,38 @@ function Update:Window(Config)
 	
 	UserInputService.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Insert then
-			STELLAR.Enabled = not STELLAR.Enabled;
+			if WTB.Enabled then
+				-- UI关闭动画
+				local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+					Size = UDim2.new(0, 0, 0, 0),
+					BackgroundTransparency = 1
+				})
+				
+				local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+					Size = UDim2.new(0, 0, 0, 0),
+					BackgroundTransparency = 1
+				})
+				
+				exitTween1:Play()
+				exitTween2:Play()
+				exitTween1.Completed:Wait()
+				WTB.Enabled = false;
+			else
+				-- UI打开动画
+				WTB.Enabled = true;
+				local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+					BackgroundTransparency = 0.4,
+					Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
+				})
+				
+				local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+					BackgroundTransparency = 0,
+					Size = WindowConfig.Size
+				})
+				
+				entranceTween1:Play()
+				entranceTween2:Play()
+			end
 		end;
 	end);
 	
@@ -1057,7 +1073,59 @@ function Update:Window(Config)
 		end;
 	end);
 	
+	-- 悬浮窗点击事件
+	ImageButton.MouseButton1Click:connect(function()
+		if WTB.Enabled then
+			-- UI关闭动画
+			local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 1
+			})
+			
+			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+				Size = UDim2.new(0, 0, 0, 0),
+				BackgroundTransparency = 1
+			})
+			
+			exitTween1:Play()
+			exitTween2:Play()
+			exitTween1.Completed:Wait()
+			WTB.Enabled = false;
+		else
+			-- UI打开动画
+			WTB.Enabled = true;
+			local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+				BackgroundTransparency = 0.4,
+				Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
+			})
+			
+			local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				BackgroundTransparency = 0,
+				Size = WindowConfig.Size
+			})
+			
+			entranceTween1:Play()
+			entranceTween2:Play()
+		end
+	end);
+	
+	-- 延迟加载UI动画
 	spawn(function()
+		wait(0.1) -- 等待加载完成
+		
+		local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+			BackgroundTransparency = 0.4,
+			Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
+		})
+		
+		local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			BackgroundTransparency = 0,
+			Size = WindowConfig.Size
+		})
+		
+		entranceTween1:Play()
+		entranceTween2:Play()
+		
 		wait(0.5)
 		local tabTween = TweenService:Create(Tab, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
@@ -1066,8 +1134,8 @@ function Update:Window(Config)
 		
 		local pageTween = TweenService:Create(Page, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
-			Position = UDim2.new(0, Tab.Size.X.Offset + 25, 0, Top.Size.Y.Offset),
-			Size = UDim2.new(Config.Size.X.Scale, Config.Size.X.Offset - Tab.Size.X.Offset - 35, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
+			Position = UDim2.new(0, WindowConfig.TabWidth + 15, 0, Top.Size.Y.Offset),
+			Size = UDim2.new(Config.Size.X.Scale, Config.Size.X.Offset - WindowConfig.TabWidth - 25, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
 		})
 		
 		local topTween = TweenService:Create(Top, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -1250,7 +1318,7 @@ function Update:Window(Config)
 				defaultSize = false;
 				OutlineMain:TweenPosition(UDim2.new(0.5, 0, 0.45, 0), "Out", "Quad", 0.2, true);
 				Main:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 35, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
 				OutlineMain:TweenSize(UDim2.new(1, -10, 1, -10), "Out", "Quad", 0.4, true);
@@ -1258,7 +1326,7 @@ function Update:Window(Config)
 			else
 				defaultSize = true;
 				Main:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset, 0, WindowConfig.Size.Y.Offset), "Out", "Quad", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 35, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
 				OutlineMain:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15), "Out", "Quad", 0.4, true);
@@ -1546,7 +1614,7 @@ function Update:Window(Config)
 			SelectItems.TextSize = 9;
 			SelectItems.ZIndex = 1;
 			SelectItems.ClipsDescendants = true;
-			SelectItems.Text = "   Select Items";
+			SelectItems.Text = "   选择项目";
 			SelectItems.TextXAlignment = Enum.TextXAlignment.Left;
 			
 			local ArrowDown = Instance.new("ImageLabel");
@@ -1806,7 +1874,7 @@ function Update:Window(Config)
 			end;
 			
 			function dropfunc:Clear()
-				SelectItems.Text = "   Select Items";
+				SelectItems.Text = "   选择项目";
 				isdropping = false;
 				DropdownFrameScroll.Visible = false;
 				for i, v in next, DropScroll:GetChildren() do
