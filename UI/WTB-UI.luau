@@ -350,8 +350,8 @@ function Update:StartLoad()
 			running = false;
 			DescriptionLoader.Text = "加载完成!";
 			
-			-- 等待2秒再加载UI
-			wait(2)
+		
+			wait(1)
 			
 			local exitTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 1
