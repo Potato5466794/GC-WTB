@@ -6,8 +6,7 @@ end;
 
 _G.Primary = Color3.fromRGB(100, 100, 100);
 _G.Dark = Color3.fromRGB(22, 22, 26);
-_G.Third = Color3.fromRGB(148, 0, 211);
-_G.Accent = Color3.fromRGB(255, 0, 128);
+_G.Third = Color3.fromRGB(255, 0, 0);
 
 function CreateRounded(Parent, Size)
 	local Rounded = Instance.new("UICorner");
@@ -20,21 +19,6 @@ local UserInputService = game:GetService("UserInputService");
 local TweenService = game:GetService("TweenService");
 local RunService = game:GetService("RunService");
 
-function CreateGradientFrame(parent, colors, rotation)
-	local frame = Instance.new("Frame")
-	frame.BackgroundTransparency = 1
-	frame.Size = UDim2.new(1, 0, 1, 0)
-	frame.ZIndex = -1
-	
-	local gradient = Instance.new("UIGradient")
-	gradient.Color = ColorSequence.new(colors)
-	gradient.Rotation = rotation or 0
-	gradient.Parent = frame
-	
-	frame.Parent = parent
-	return frame
-end
-
 function MakeDraggable(topbarobject, object)
 	local Dragging = nil;
 	local DragInput = nil;
@@ -44,7 +28,7 @@ function MakeDraggable(topbarobject, object)
 	local function Update(input)
 		local Delta = input.Position - DragStart;
 		local pos = UDim2.new(StartPosition.X.Scale, StartPosition.X.Offset + Delta.X, StartPosition.Y.Scale, StartPosition.Y.Offset + Delta.Y);
-		local Tween = TweenService:Create(object, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = pos});
+		local Tween = TweenService:Create(object, TweenInfo.new(0.15), {Position = pos});
 		Tween:Play();
 	end;
 	
@@ -88,12 +72,6 @@ OutlineButton.Position = UDim2.new(0, 10, 0, 10);
 OutlineButton.Size = UDim2.new(0, 50, 0, 50);
 CreateRounded(OutlineButton, 12);
 
-CreateGradientFrame(OutlineButton, {
-	Color3.fromRGB(148, 0, 211),
-	Color3.fromRGB(255, 0, 128),
-	Color3.fromRGB(148, 0, 211)
-}, 45)
-
 local ImageButton = Instance.new("ImageButton");
 ImageButton.Parent = OutlineButton;
 ImageButton.Position = UDim2.new(0.5, 0, 0.5, 0);
@@ -102,7 +80,7 @@ ImageButton.AnchorPoint = Vector2.new(0.5, 0.5);
 ImageButton.BackgroundColor3 = _G.Dark;
 ImageButton.ImageColor3 = Color3.fromRGB(250, 250, 250);
 ImageButton.ImageTransparency = 0;
-ImageButton.BackgroundTransparency = 1;
+ImageButton.BackgroundTransparency = 0;
 ImageButton.Image = "rbxassetid://105059922903197";
 ImageButton.AutoButtonColor = false;
 MakeDraggable(ImageButton, OutlineButton);
@@ -121,17 +99,13 @@ local function RemoveOldestNotification()
 		removed[1]:TweenPosition(UDim2.new(0.5, 0, -0.2, 0), "Out", "Quad", 0.4, true, function()
 			removed[1]:Destroy();
 		end);
-		
-		for i, notification in ipairs(NotificationList) do
-			notification[1]:TweenPosition(UDim2.new(0.5, 0, 0.1 + (i-1) * 0.1, 0), "Out", "Quad", 0.3, true);
-		end
 	end;
 end;
 
 spawn(function()
 	while wait() do
 		if #NotificationList > 0 then
-			wait(3);
+			wait(2);
 			RemoveOldestNotification();
 		end;
 	end;
@@ -151,15 +125,9 @@ function Update:Notify(desc)
 	OutlineFrame.ClipsDescendants = true;
 	OutlineFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30);
 	OutlineFrame.AnchorPoint = Vector2.new(0.5, 1);
-	OutlineFrame.BackgroundTransparency = 0.6;
+	OutlineFrame.BackgroundTransparency = 0.4;
 	OutlineFrame.Position = UDim2.new(0.5, 0, -0.2, 0);
 	OutlineFrame.Size = UDim2.new(0, 412, 0, 72);
-	
-	CreateGradientFrame(OutlineFrame, {
-		Color3.fromRGB(148, 0, 211),
-		Color3.fromRGB(255, 0, 128),
-		Color3.fromRGB(148, 0, 211)
-	}, 45)
 	
 	Frame.Name = "Frame";
 	Frame.Parent = OutlineFrame;
@@ -227,12 +195,6 @@ function Update:StartLoad()
 	LoaderFrame.Size = UDim2.new(0, 0, 0, 0);
 	LoaderFrame.BorderSizePixel = 0;
 	CreateRounded(LoaderFrame, 15);
-	
-	CreateGradientFrame(LoaderFrame, {
-		Color3.fromRGB(148, 0, 211),
-		Color3.fromRGB(255, 0, 128),
-		Color3.fromRGB(148, 0, 211)
-	}, 45)
 	
 	local MainLoaderFrame = Instance.new("Frame");
 	MainLoaderFrame.Name = "MainLoaderFrame";
@@ -308,15 +270,15 @@ function Update:StartLoad()
 		Size = UDim2.new(0.9, 0, 0.9, 0)
 	})
 	
-	local textTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+	local textTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		TextTransparency = 0
 	})
 	
-	local textTween2 = TweenService:Create(DescriptionLoader, TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+	local textTween2 = TweenService:Create(DescriptionLoader, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		TextTransparency = 0
 	})
 	
-	local barBgTween = TweenService:Create(LoadingBarBackground, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+	local barBgTween = TweenService:Create(LoadingBarBackground, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		BackgroundTransparency = 0,
 		Size = UDim2.new(0.7, 0, 0.05, 0)
 	})
@@ -365,12 +327,12 @@ function Update:StartLoad()
 	local dotCount = 0;
 	local running = true;
 	
-	local barTweenInfoPart1 = TweenInfo.new(0.8, Enum.EasingStyle.Quint, Enum.EasingDirection.Out);
+	local barTweenInfoPart1 = TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out);
 	local barTweenPart1 = tweenService:Create(LoadingBar, barTweenInfoPart1, {
 		Size = UDim2.new(0.4, 0, 1, 0)
 	});
 	
-	local barTweenInfoPart2 = TweenInfo.new(1.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out);
+	local barTweenInfoPart2 = TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out);
 	local barTweenPart2 = tweenService:Create(LoadingBar, barTweenInfoPart2, {
 		Size = UDim2.new(1, 0, 1, 0)
 	});
@@ -388,17 +350,18 @@ function Update:StartLoad()
 			running = false;
 			DescriptionLoader.Text = "加载完成!";
 			
+			-- 等待2秒再加载UI
 			wait(1)
 			
-			local exitTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			local exitTween1 = TweenService:Create(TitleLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 1
 			})
 			
-			local exitTween2 = TweenService:Create(DescriptionLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			local exitTween2 = TweenService:Create(DescriptionLoader, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 1
 			})
 			
-			local exitTween3 = TweenService:Create(LoadingBarBackground, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			local exitTween3 = TweenService:Create(LoadingBarBackground, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 1
 			})
 			
@@ -524,12 +487,6 @@ function Update:Window(Config)
 	OutlineMain.Size = UDim2.new(0, 0, 0, 0);
 	CreateRounded(OutlineMain, 15);
 	
-	CreateGradientFrame(OutlineMain, {
-		Color3.fromRGB(148, 0, 211),
-		Color3.fromRGB(255, 0, 128),
-		Color3.fromRGB(148, 0, 211)
-	}, 45)
-	
 	local Main = Instance.new("Frame");
 	Main.Name = "Main";
 	Main.Parent = OutlineMain;
@@ -634,12 +591,6 @@ function Update:Window(Config)
 		DialogFrame.ZIndex = 1001;
 		CreateRounded(DialogFrame, 12);
 		
-		CreateGradientFrame(DialogFrame, {
-			Color3.fromRGB(148, 0, 211),
-			Color3.fromRGB(255, 0, 128),
-			Color3.fromRGB(148, 0, 211)
-		}, 45)
-		
 		local DialogTitle = Instance.new("TextLabel");
 		DialogTitle.Parent = DialogFrame;
 		DialogTitle.Text = "确认关闭";
@@ -695,6 +646,7 @@ function Update:Window(Config)
 		ConfirmButton.ZIndex = 1003;
 		CreateRounded(ConfirmButton, 5);
 		
+		-- 弹窗入场动画
 		local entranceTween = TweenService:Create(DialogFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 			Size = UDim2.new(0, 300, 0, 150)
 		})
@@ -715,7 +667,7 @@ function Update:Window(Config)
 				BackgroundTransparency = 1
 			})
 			
-			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
+			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 				Size = UDim2.new(0, 0, 0, 0),
 				BackgroundTransparency = 1
 			})
@@ -787,7 +739,7 @@ function Update:Window(Config)
 	CreateRounded(CloseSettings, 3);
 	
 	CloseSettings.MouseButton1Click:connect(function()
-		local exitTween1 = TweenService:Create(BackgroundSettings, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local exitTween1 = TweenService:Create(BackgroundSettings, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 1
 		})
 		
@@ -818,7 +770,7 @@ function Update:Window(Config)
 	SettingsButton.MouseButton1Click:connect(function()
 		BackgroundSettings.Visible = true;
 		
-		local entranceTween1 = TweenService:Create(BackgroundSettings, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local entranceTween1 = TweenService:Create(BackgroundSettings, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0.3
 		})
 		
@@ -918,12 +870,12 @@ function Update:Window(Config)
 		Checkbox.MouseButton1Click:Connect(function()
 			checked = not checked;
 			if checked then
-				TweenService:Create(Checkbox, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				TweenService:Create(Checkbox, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					ImageTransparency = 0,
 					BackgroundColor3 = _G.Third
 				}):Play()
 			else
-				TweenService:Create(Checkbox, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				TweenService:Create(Checkbox, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					ImageTransparency = 1,
 					BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 				}):Play()
@@ -964,17 +916,12 @@ function Update:Window(Config)
 		Button.TextSize = 15;
 		Button.AutoButtonColor = false;
 		
-		CreateGradientFrame(Button, {
-			Color3.fromRGB(148, 0, 211),
-			Color3.fromRGB(255, 0, 128)
-		}, 0)
-		
 		Button.MouseButton1Click:Connect(function()
-			TweenService:Create(Button, TweenInfo.new(0.1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.3
 			}):Play()
 			wait(0.1)
-			TweenService:Create(Button, TweenInfo.new(0.1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Button, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0
 			}):Play()
 			callback();
@@ -1057,10 +1004,10 @@ function Update:Window(Config)
 	UIPageLayout.Parent = PageList;
 	UIPageLayout.SortOrder = Enum.SortOrder.LayoutOrder;
 	UIPageLayout.EasingDirection = Enum.EasingDirection.InOut;
-	UIPageLayout.EasingStyle = Enum.EasingStyle.Quint;
+	UIPageLayout.EasingStyle = Enum.EasingStyle.Quad;
 	UIPageLayout.FillDirection = Enum.FillDirection.Vertical;
 	UIPageLayout.Padding = UDim.new(0, 10);
-	UIPageLayout.TweenTime = 0.4;
+	UIPageLayout.TweenTime = 0.3;
 	UIPageLayout.GamepadInputEnabled = false;
 	UIPageLayout.ScrollWheelInputEnabled = false;
 	UIPageLayout.TouchInputEnabled = false;
@@ -1070,12 +1017,13 @@ function Update:Window(Config)
 	UserInputService.InputBegan:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.Insert then
 			if WTB.Enabled then
+				-- UI关闭动画
 				local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
 					Size = UDim2.new(0, 0, 0, 0),
 					BackgroundTransparency = 1
 				})
 				
-				local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
+				local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 					Size = UDim2.new(0, 0, 0, 0),
 					BackgroundTransparency = 1
 				})
@@ -1085,13 +1033,14 @@ function Update:Window(Config)
 				exitTween1.Completed:Wait()
 				WTB.Enabled = false;
 			else
+				-- UI打开动画
 				WTB.Enabled = true;
 				local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 					BackgroundTransparency = 0.4,
 					Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
 				})
 				
-				local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					BackgroundTransparency = 0,
 					Size = WindowConfig.Size
 				})
@@ -1124,14 +1073,16 @@ function Update:Window(Config)
 		end;
 	end);
 	
+	-- 悬浮窗点击事件
 	ImageButton.MouseButton1Click:connect(function()
 		if WTB.Enabled then
+			-- UI关闭动画
 			local exitTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
 				Size = UDim2.new(0, 0, 0, 0),
 				BackgroundTransparency = 1
 			})
 			
-			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {
+			local exitTween2 = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 				Size = UDim2.new(0, 0, 0, 0),
 				BackgroundTransparency = 1
 			})
@@ -1141,13 +1092,14 @@ function Update:Window(Config)
 			exitTween1.Completed:Wait()
 			WTB.Enabled = false;
 		else
+			-- UI打开动画
 			WTB.Enabled = true;
 			local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.4,
 				Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
 			})
 			
-			local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0,
 				Size = WindowConfig.Size
 			})
@@ -1157,15 +1109,16 @@ function Update:Window(Config)
 		end
 	end);
 	
+	-- 延迟加载UI动画
 	spawn(function()
-		wait(0.1)
+		wait(0.1) -- 等待加载完成
 		
 		local entranceTween1 = TweenService:Create(OutlineMain, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0.4,
 			Size = UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15)
 		})
 		
-		local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local entranceTween2 = TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
 			Size = WindowConfig.Size
 		})
@@ -1174,18 +1127,18 @@ function Update:Window(Config)
 		entranceTween2:Play()
 		
 		wait(0.5)
-		local tabTween = TweenService:Create(Tab, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local tabTween = TweenService:Create(Tab, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
 			Size = UDim2.new(0, WindowConfig.TabWidth, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
 		})
 		
-		local pageTween = TweenService:Create(Page, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local pageTween = TweenService:Create(Page, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0,
 			Position = UDim2.new(0, WindowConfig.TabWidth + 15, 0, Top.Size.Y.Offset),
 			Size = UDim2.new(Config.Size.X.Scale, Config.Size.X.Offset - WindowConfig.TabWidth - 25, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8)
 		})
 		
-		local topTween = TweenService:Create(Top, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		local topTween = TweenService:Create(Top, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = 0
 		})
 		
@@ -1280,31 +1233,31 @@ function Update:Window(Config)
 		TabButton.MouseButton1Click:Connect(function()
 			for i, v in next, ScrollTab:GetChildren() do
 				if v:IsA("TextButton") then
-					TweenService:Create(v, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 1
 					}):Play();
-					TweenService:Create(v.SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Size = UDim2.new(0, 3, 0, 0)
 					}):Play();
-					TweenService:Create(v.IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						ImageTransparency = 0.4
 					}):Play();
-					TweenService:Create(v.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						TextTransparency = 0.4
 					}):Play();
 				end;
 			end;
 			
-			TweenService:Create(TabButton, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(TabButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play();
-			TweenService:Create(SelectedTab, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(SelectedTab, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				Size = UDim2.new(0, 3, 0, 15)
 			}):Play();
-			TweenService:Create(IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				ImageTransparency = 0
 			}):Play();
-			TweenService:Create(Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Title, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 0
 			}):Play();
 			
@@ -1319,31 +1272,31 @@ function Update:Window(Config)
 		if abc == false then
 			for i, v in next, ScrollTab:GetChildren() do
 				if v:IsA("TextButton") then
-					TweenService:Create(v, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 1
 					}):Play();
-					TweenService:Create(v.SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Size = UDim2.new(0, 3, 0, 0)
 					}):Play();
-					TweenService:Create(v.IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						ImageTransparency = 0.4
 					}):Play();
-					TweenService:Create(v.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(v.Title, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						TextTransparency = 0.4
 					}):Play();
 				end;
 			end;
 			
-			TweenService:Create(TabButton, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(TabButton, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play();
-			TweenService:Create(SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(SelectedTab, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				Size = UDim2.new(0, 3, 0, 15)
 			}):Play();
-			TweenService:Create(IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(IDK, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				ImageTransparency = 0
 			}):Play();
-			TweenService:Create(Title, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Title, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				TextTransparency = 0
 			}):Play();
 			
@@ -1363,20 +1316,20 @@ function Update:Window(Config)
 		ResizeButton.MouseButton1Click:Connect(function()
 			if defaultSize then
 				defaultSize = false;
-				OutlineMain:TweenPosition(UDim2.new(0.5, 0, 0.45, 0), "Out", "Quint", 0.2, true);
-				Main:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quint", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quint", 0.4, true);
-					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quint", 0.4, true);
+				OutlineMain:TweenPosition(UDim2.new(0.5, 0, 0.45, 0), "Out", "Quad", 0.2, true);
+				Main:TweenSize(UDim2.new(1, 0, 1, 0), "Out", "Quad", 0.4, true, function()
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
-				OutlineMain:TweenSize(UDim2.new(1, -10, 1, -10), "Out", "Quint", 0.4, true);
+				OutlineMain:TweenSize(UDim2.new(1, -10, 1, -10), "Out", "Quad", 0.4, true);
 				ResizeButton.Image = "rbxassetid://10734895698";
 			else
 				defaultSize = true;
-				Main:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset, 0, WindowConfig.Size.Y.Offset), "Out", "Quint", 0.4, true, function()
-					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quint", 0.4, true);
-					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quint", 0.4, true);
+				Main:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset, 0, WindowConfig.Size.Y.Offset), "Out", "Quad", 0.4, true, function()
+					Page:TweenSize(UDim2.new(0, Main.AbsoluteSize.X - Tab.AbsoluteSize.X - 25, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
+					Tab:TweenSize(UDim2.new(0, WindowConfig.TabWidth, 0, Main.AbsoluteSize.Y - Top.AbsoluteSize.Y - 10), "Out", "Quad", 0.4, true);
 				end);
-				OutlineMain:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15), "Out", "Quint", 0.4, true);
+				OutlineMain:TweenSize(UDim2.new(0, WindowConfig.Size.X.Offset + 15, 0, WindowConfig.Size.Y.Offset + 15), "Out", "Quad", 0.4, true);
 				ResizeButton.Image = "rbxassetid://10734886735";
 			end;
 		end);
@@ -1467,17 +1420,17 @@ function Update:Window(Config)
 			UICorner_3.Parent = Black;
 			
 			TextButton.MouseButton1Click:Connect(function()
-				TweenService:Create(TextButton, TweenInfo.new(0.1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				TweenService:Create(TextButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					BackgroundTransparency = 0.5
 				}):Play()
 				wait(0.1)
-				TweenService:Create(TextButton, TweenInfo.new(0.1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+				TweenService:Create(TextButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 					BackgroundTransparency = 0.8
 				}):Play()
 				callback();
 			end);
 			
-			TweenService:Create(Button, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 		end;
@@ -1574,19 +1527,19 @@ function Update:Window(Config)
 			ToggleImage.MouseButton1Click:Connect(function()
 				if toggled == false then
 					toggled = true;
-					TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Position = UDim2.new(0, 17, 0.5, 0)
 					}):Play()
-					TweenService:Create(ToggleImage, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(ToggleImage, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundColor3 = _G.Third,
 						BackgroundTransparency = 0
 					}):Play()
 				else
 					toggled = false;
-					TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Position = UDim2.new(0, 4, 0.5, 0)
 					}):Play()
-					TweenService:Create(ToggleImage, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(ToggleImage, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundColor3 = Color3.fromRGB(200, 200, 200),
 						BackgroundTransparency = 0.8
 					}):Play()
@@ -1602,7 +1555,7 @@ function Update:Window(Config)
 				pcall(callback, toggled);
 			end;
 			
-			TweenService:Create(Button, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 		end;
@@ -1783,22 +1736,22 @@ function Update:Window(Config)
 						if v:IsA("TextButton") then
 							local SelectedItems = v:FindFirstChild("SelectedItems");
 							if activeItem == v.Text then
-								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 									BackgroundTransparency = 0.8,
 									TextTransparency = 0
 								}):Play()
 								if SelectedItems then
-									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 										BackgroundTransparency = 0
 									}):Play()
 								end;
 							else
-								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 									BackgroundTransparency = 1,
 									TextTransparency = 0.5
 								}):Play()
 								if SelectedItems then
-									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 										BackgroundTransparency = 1
 									}):Play()
 								end;
@@ -1814,36 +1767,36 @@ function Update:Window(Config)
 			SelectItems.MouseButton1Click:Connect(function()
 				if isdropping == false then
 					isdropping = true;
-					TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 0.8,
 						Size = UDim2.new(1, 0, 0, 145)
 					}):Play()
-					TweenService:Create(DropdownFrameScroll, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(DropdownFrameScroll, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 0,
 						Size = UDim2.new(1, -10, 0, 100),
 						Visible = true
 					}):Play();
-					TweenService:Create(ArrowDown, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(ArrowDown, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Rotation = 180
 					}):Play();
 				else
 					isdropping = false;
-					TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 0.8,
 						Size = UDim2.new(1, 0, 0, 40)
 					}):Play()
-					TweenService:Create(DropdownFrameScroll, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(DropdownFrameScroll, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						BackgroundTransparency = 1,
 						Size = UDim2.new(1, -10, 0, 0),
 						Visible = false
 					}):Play();
-					TweenService:Create(ArrowDown, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+					TweenService:Create(ArrowDown, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 						Rotation = 0
 					}):Play();
 				end;
 			end);
 			
-			TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Dropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 			
@@ -1894,22 +1847,22 @@ function Update:Window(Config)
 						if v:IsA("TextButton") then
 							local SelectedItems = v:FindFirstChild("SelectedItems");
 							if activeItem == v.Text then
-								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 									BackgroundTransparency = 0.8,
 									TextTransparency = 0
 								}):Play()
 								if SelectedItems then
-									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 										BackgroundTransparency = 0
 									}):Play()
 								end;
 							else
-								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+								TweenService:Create(v, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 									BackgroundTransparency = 1,
 									TextTransparency = 0.5
 								}):Play()
 								if SelectedItems then
-									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+									TweenService:Create(SelectedItems, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 										BackgroundTransparency = 1
 									}):Play()
 								end;
@@ -2048,11 +2001,11 @@ function Update:Window(Config)
 				end);
 			end;
 			
-			TweenService:Create(sliderr, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(sliderr, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 			
-			TweenService:Create(bar, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(bar, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 			
@@ -2142,11 +2095,11 @@ function Update:Window(Config)
 			UICorner.CornerRadius = UDim.new(0, 5);
 			UICorner.Parent = RealTextbox;
 			
-			TweenService:Create(Textbox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(Textbox, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 			
-			TweenService:Create(RealTextbox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			TweenService:Create(RealTextbox, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 				BackgroundTransparency = 0.8
 			}):Play()
 		end;
@@ -2221,9 +2174,9 @@ function Update:Window(Config)
 			local Grad1 = Instance.new("UIGradient");
 			Grad1.Color = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, _G.Dark),
-				ColorSequenceKeypoint.new(0.4, _G.Third),
-				ColorSequenceKeypoint.new(0.5, _G.Accent),
-				ColorSequenceKeypoint.new(0.6, _G.Third),
+				ColorSequenceKeypoint.new(0.4, _G.Primary),
+				ColorSequenceKeypoint.new(0.5, _G.Primary),
+				ColorSequenceKeypoint.new(0.6, _G.Primary),
 				ColorSequenceKeypoint.new(1, _G.Dark)
 			});
 			Grad1.Parent = Sep1;
@@ -2253,9 +2206,9 @@ function Update:Window(Config)
 			local Grad3 = Instance.new("UIGradient");
 			Grad3.Color = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, _G.Dark),
-				ColorSequenceKeypoint.new(0.4, _G.Third),
-				ColorSequenceKeypoint.new(0.5, _G.Accent),
-				ColorSequenceKeypoint.new(0.6, _G.Third),
+				ColorSequenceKeypoint.new(0.4, _G.Primary),
+				ColorSequenceKeypoint.new(0.5, _G.Primary),
+				ColorSequenceKeypoint.new(0.6, _G.Primary),
 				ColorSequenceKeypoint.new(1, _G.Dark)
 			});
 			Grad3.Parent = Sep3;
@@ -2282,9 +2235,9 @@ function Update:Window(Config)
 			
 			UIGradient.Color = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, _G.Dark),
-				ColorSequenceKeypoint.new(0.4, _G.Third),
-				ColorSequenceKeypoint.new(0.5, _G.Accent),
-				ColorSequenceKeypoint.new(0.6, _G.Third),
+				ColorSequenceKeypoint.new(0.4, _G.Primary),
+				ColorSequenceKeypoint.new(0.5, _G.Primary),
+				ColorSequenceKeypoint.new(0.6, _G.Primary),
 				ColorSequenceKeypoint.new(1, _G.Dark)
 			});
 			UIGradient.Parent = Line;
